@@ -9,25 +9,66 @@ import wikipedia
 from config import TOKEN
 
 
-language = "ru"
-wikipedia.set_lang(language)
+language = 'en'
 
 with open('text.txt', 'r', encoding='UTF-8') as f:
-    lines = f.readlines()[1:]
-    help = ''
-    for line in lines:
-        help += line
+    lines = f.read().split('\n\n\n')
+    en, ru = lines
+    en = en.split('\n')
+    ru = ru.split('\n')
+
+    start_en = ''
+    start_ru = ''
+    for i in range(3, 5, 2):
+        start_en += en[i]
+        start_ru += ru[i]
+
+    help_en = ''
+    help_ru = ''
+    for i in '\n'.join(en[7:]):
+        help_en += i
+    for i in '\n'.join(ru[7:]):
+        help_ru += i
+
+with open('language.txt', 'r', encoding='UTF-8') as f:
+    language = f.read()
+
+wikipedia.set_lang(language)
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    await message.reply('Привет!\nИспользуй /help')
+    start = start_ru
+    if language == 'en':
+        start = start_en
+
+    await message.reply(start)
 
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
+    help = help_ru
+    if language == 'en':
+        help = help_en
+
     await message.reply(help)
+
+@dp.message_handler(commands=['switchLang'])
+async def switch_language(message: types.Message):
+    lang = {'ru': 'en', 'en': 'ru'}[language]
+    with open('language.txt', 'w', encoding='UTF-8') as f:
+        f.write(lang)
+
+    if lang == 'ru':
+        lang = 'en'
+        msg = 'Done! Please, refresh the bot to apply changes'
+    else:
+        lang = 'ru'
+        msg = 'Готово! Пожалуйста, обновите бота, чтобы применить изменения'
+
+    await message.reply(msg)
+
 
 @dp.message_handler(commands=['summary'])
 async def wikipedia_summary_command(message: types.Message):
@@ -44,7 +85,7 @@ async def wikipedia_summary_command(message: types.Message):
 async def wikipedia_summary_command(message: types.Message):
     await bot.send_message(message.from_user.id, [i for i in wikipedia.search(message.text[8:])], parse_mode=ParseMode.MARKDOWN)
 
-@dp.message_handler(commands=['search'])
+@dp.message_handler(commands=['title'])
 async def wikipedia_summary_command(message: types.Message):
     await bot.send_message(message.from_user.id, wikipedia.page(message.text[9:]).title, parse_mode=ParseMode.MARKDOWN)
 

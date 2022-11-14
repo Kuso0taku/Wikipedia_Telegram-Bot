@@ -1,3 +1,32 @@
+"en":
+process_start_command:
+Hello!
+Use /help
+/
+process_help_command:
+This is the bot that looks up information on wikipedia and sends it here as a text message.
+
+I have commands:
+/summary *topic* - I'll print a summary of the relevant topic for you
+/sentence *number* *topic* - I will give you information on the topic in a given number of sentences
+/search *topic* - search Wikipedia for similar topics
+/title *topic* - show the title of the page in wikipedia
+/content *topic* - I will give the full content from Wikipedia on this topic
+/references *topic* - I will print the literature used
+/links *topic* - will display all links from the page
+
+Or just enter a subject to get a short description
+
+To change the language to Russian enter:
+   /switchLang
+and refresh the bot to apply changes
+
+
+"ru":
+process_start_command:
+Привет!
+Используй /help
+/
 process_help_command:
 Это бот, который ищет информацию в wikipedia и отправляет ее сюда текстовым сообщением.
 
@@ -11,3 +40,7 @@ process_help_command:
 /links *тема* - выдам все ссылки со страницы
 
 Или просто введите тему, чтобы получить краткое описание
+
+Чтобы сменить язык на английский введите:
+   /switchLang
+и обновите бота, чтобы применить изменения
