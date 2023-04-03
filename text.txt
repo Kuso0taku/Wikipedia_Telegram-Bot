@@ -16,10 +16,9 @@ I have commands:
 /links *topic* - will display all links from the page
 
 Or just enter a subject to get a short description
+/
 
-To change the language to Russian enter:
-   /switchLang
-and refresh the bot to apply changes
+Something wet wrong! Try to enter somewhat else!
 
 
 "ru":
@@ -40,7 +39,6 @@ process_help_command:
 /links *тема* - выдам все ссылки со страницы
 
 Или просто введите тему, чтобы получить краткое описание
+/
 
-Чтобы сменить язык на английский введите:
-   /switchLang
-и обновите бота, чтобы применить изменения
+Что-то пошло не так! Попробуйте ввести что-нибудь другое!

@@ -10,102 +10,128 @@ from config import TOKEN
 
 
 language = 'en'
+wikipedia.set_lang(language)
 
 with open('text.txt', 'r', encoding='UTF-8') as f:
     lines = f.read().split('\n\n\n')
     en, ru = lines
-    en = en.split('\n')
-    ru = ru.split('\n')
+    line, num = en, -1
+    if language == 'ru':
+        line, num = ru, len(line) + 1
+    line = line.split('\n')
 
-    start_en = ''
-    start_ru = ''
-    for i in range(3, 5, 2):
-        start_en += en[i]
-        start_ru += ru[i]
+    start = '\n'.join(line[3+num:5+num])
 
-    help_en = ''
-    help_ru = ''
-    for i in '\n'.join(en[7:]):
-        help_en += i
-    for i in '\n'.join(ru[7:]):
-        help_ru += i
+    help = '\n'.join(line[7+num:19+num])
 
-with open('language.txt', 'r', encoding='UTF-8') as f:
-    language = f.read()
+    wrong = line[21+num]
 
-wikipedia.set_lang(language)
+#with open('language.txt', 'r', encoding='UTF-8') as f:
+#    language = f.read()
+
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    start = start_ru
-    if language == 'en':
-        start = start_en
-
     await message.reply(start)
 
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
-    help = help_ru
-    if language == 'en':
-        help = help_en
-
     await message.reply(help)
 
-@dp.message_handler(commands=['switchLang'])
-async def switch_language(message: types.Message):
-    lang = {'ru': 'en', 'en': 'ru'}[language]
-    with open('language.txt', 'w', encoding='UTF-8') as f:
-        f.write(lang)
+#@dp.message_handler(commands=['switchLang'])
+#async def switch_language(message: types.Message):
+#    lang = {'ru': 'en', 'en': 'ru'}[language]
+#    with open('language.txt', 'w', encoding='UTF-8') as f:
+#        f.write(lang)
 
-    if lang == 'ru':
-        lang = 'en'
-        msg = 'Done! Please, refresh the bot to apply changes'
-    else:
-        lang = 'ru'
-        msg = 'Готово! Пожалуйста, обновите бота, чтобы применить изменения'
+#    if lang == 'ru':
+ #       lang = 'en'
+#        msg = 'Done! Please, refresh the bot to apply changes'
+ #   else:
+ #       lang = 'ru'
+ #       msg = 'Готово! Пожалуйста, обновите бота, чтобы применить изменения'
 
-    await message.reply(msg)
+ #   await message.reply(msg)
 
 
 @dp.message_handler(commands=['summary'])
 async def wikipedia_summary_command(message: types.Message):
-    await bot.send_message(message.from_user.id, wikipedia.page(message.text[9:]).summary, parse_mode=ParseMode.MARKDOWN)
+    command = wikipedia.page(message.text[9:]).summary
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(message.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 @dp.message_handler(commands=['sentence'])
 async def wikipedia_summary_command(message: types.Message):
     msg = message.text.split()[0]
     num = msg[1]
     theme = ' '.join(msg[2:])
-    await bot.send_message(message.from_user.id, wikipedia.summary(theme, sentences=num), parse_mode=ParseMode.MARKDOWN)
+    command = wikipedia.summary(theme, sentences=num)
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(message.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 @dp.message_handler(commands=['search'])
 async def wikipedia_summary_command(message: types.Message):
-    await bot.send_message(message.from_user.id, [i for i in wikipedia.search(message.text[8:])], parse_mode=ParseMode.MARKDOWN)
+    command = [i for i in wikipedia.search(message.text[8:])]
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(message.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 @dp.message_handler(commands=['title'])
 async def wikipedia_summary_command(message: types.Message):
-    await bot.send_message(message.from_user.id, wikipedia.page(message.text[9:]).title, parse_mode=ParseMode.MARKDOWN)
+    command = wikipedia.page(message.text[7:]).title
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(message.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 @dp.message_handler(commands=['content'])
 async def wikipedia_summary_command(message: types.Message):
-    await bot.send_message(message.from_user.id, wikipedia.page(message.text[9:]).content, parse_mode=ParseMode.MARKDOWN)
+    command = wikipedia.page(message.text[9:]).content
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(message.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 @dp.message_handler(commands=['references'])
 async def wikipedia_summary_command(message: types.Message):
-    await bot.send_message(message.from_user.id, wikipedia.page(message.text[9:]).references, parse_mode=ParseMode.MARKDOWN)
+    command = wikipedia.page(message.text[12:]).references
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(message.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 @dp.message_handler(commands=['links'])
 async def wikipedia_summary_command(message: types.Message):
-    await bot.send_message(message.from_user.id, wikipedia.page(message.text[9:]).links, parse_mode=ParseMode.MARKDOWN)
+    command = wikipedia.page(message.text[7:]).links
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(message.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 
 @dp.message_handler(content_types=ContentType.ANY)
 async def unknown_message(msg: types.Message):
-    await bot.send_message(msg.from_user.id, wikipedia.summary(msg.text, sentences=3), parse_mode=ParseMode.MARKDOWN)
-
+    command = wikipedia.summary(msg.text, sentences=3)
+    try:
+        answer = command
+    except:
+        answer = wrong
+    await bot.send_message(msg.from_user.id, answer, parse_mode=ParseMode.MARKDOWN)
 
 def main():
     executor.start_polling(dp)
